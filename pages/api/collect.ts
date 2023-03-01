@@ -97,7 +97,6 @@ export default async (req: NextApiRequestCollect, res: NextApiResponse) => {
       url,
       referrer,
       eventName,
-      eventData,
     });
   } else {
     return badRequest(res);
