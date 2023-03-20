@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
+const http = require('http');
 const zlib = require('zlib');
 const tar = require('tar');
 
@@ -22,9 +22,17 @@ if (!fs.existsSync(dest)) {
 
 const download = url =>
   new Promise(resolve => {
-    https.get(url, res => {
-      resolve(res.pipe(zlib.createGunzip({})).pipe(tar.t()));
-    });
+    http.get(
+      {
+        host: process.env.PROXY_HOST,
+        port: Number(process.env.PROXY_PORT),
+        method: 'CONNECT',
+        path: url,
+      },
+      res => {
+        resolve(res.pipe(zlib.createGunzip({})).pipe(tar.t()));
+      },
+    );
   });
 
 download(url).then(
